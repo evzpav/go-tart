@@ -1,4 +1,4 @@
-module github.com/iamjinlei/go-tart
+module github.com/evzpav/go-tart
 
 go 1.13
 

@@ -1,9 +1,9 @@
 <h1 align="center">go-tart (go-TA RealTime)</h1>
 
-[![Build Status](https://travis-ci.com/iamjinlei/go-tart.svg?branch=master)](https://travis-ci.com/iamjinlei/go-tart)
-[![Go Report Card](https://goreportcard.com/badge/github.com/iamjinlei/go-tart)](https://goreportcard.com/report/github.com/iamjinlei/go-tart)
+[![Build Status](https://travis-ci.com/evzpav/go-tart.svg?branch=master)](https://travis-ci.com/evzpav/go-tart)
+[![Go Report Card](https://goreportcard.com/badge/github.com/evzpav/go-tart)](https://goreportcard.com/report/github.com/evzpav/go-tart)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Go Reference](https://pkg.go.dev/badge/github.com/iamjinlei/go-tart.svg)](https://pkg.go.dev/github.com/iamjinlei/go-tart)
+[![Go Reference](https://pkg.go.dev/badge/github.com/evzpav/go-tart.svg)](https://pkg.go.dev/github.com/evzpav/go-tart)
 
 ## Intro
 
@@ -12,7 +12,7 @@ However, its code is very verbose and hard to read due to the straight translati
 More often, streaming incremental updates to indicators is desirable.
 We don't want to recalculate the full result if the sliding window only moves forward a single value while history values are not changed at all.
 Recalculation of the history for every new value is expensive.
-With those in mind, [go-tart](https://github.com/iamjinlei/go-tart) intends to support streaming updates of new values with a concise implementation.
+With those in mind, [go-tart](https://github.com/evzpav/go-tart) intends to support streaming updates of new values with a concise implementation.
 Most of the indicators from [go-talib](https://github.com/markcheno/go-talib) are realized except a few trivial ones and those involves *Hilbert Transform*.
 Results are verified using [TA-Lib](http://ta-lib.org/)'s output.
 MACD's "stability" issue from [go-talib](https://github.com/markcheno/go-talib) is fixed.
@@ -21,27 +21,27 @@ MACD's "stability" issue from [go-talib](https://github.com/markcheno/go-talib) 
 
 A benchmark is written to compare the performance for the set of indicators from both [go-talib](https://github.com/markcheno/go-talib) and [go-talib](https://github.com/markcheno/go-talib).
 This is not a scientific evaluation but gives a sense of how they perform in case of a full recalculation.
-As shown below, [go-tart](https://github.com/iamjinlei/go-tart) is about 3X slower in full recalculation, which is due to function call to *Update* in each iteration.
+As shown below, [go-tart](https://github.com/evzpav/go-tart) is about 3X slower in full recalculation, which is due to function call to *Update* in each iteration.
 [go-talib](https://github.com/markcheno/go-talib) holds advantage because its code is inlined.
 ```bash
 gotest -run ^$ -bench=.
 BenchmarkTart-4             2019            496703 ns/op
 BenchmarkTalib-4            7944            150311 ns/op
 ```
-After the initial full calculation, [go-tart](https://github.com/iamjinlei/go-tart) should perform better as it only needs a single iteration cost to compute a new update.
+After the initial full calculation, [go-tart](https://github.com/evzpav/go-tart) should perform better as it only needs a single iteration cost to compute a new update.
 
 ## Install
 
 Install the package with:
 
 ```bash
-go get github.com/iamjinlei/go-tart
+go get github.com/evzpav/go-tart
 ```
 
 Import it with:
 
 ```go
-import "github.com/iamjinlei/go-tart"
+import "github.com/evzpav/go-tart"
 ```
 
 and use `tart` as the package name
@@ -54,7 +54,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/iamjinlei/go-tart"
+	"github.com/evzpav/go-tart"
 )
 
 func main() {
