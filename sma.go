@@ -11,18 +11,20 @@ package tart
 //  https://www.investopedia.com/terms/s/sma.asp
 //  https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/sma
 type Sma struct {
-	n    int64
-	hist *CBuf
-	sz   int64
-	sum  float64
+	n     int64
+	hist  *CBuf
+	sz    int64
+	sum   float64
+	maVal *CBuf
 }
 
 func NewSma(n int64) *Sma {
 	return &Sma{
-		n:    n,
-		hist: NewCBuf(n),
-		sz:   0,
-		sum:  0,
+		n:     n,
+		hist:  NewCBuf(n),
+		sz:    0,
+		sum:   0,
+		maVal: NewCBuf(n),
 	}
 }
 
@@ -36,7 +38,11 @@ func (s *Sma) Update(v float64) float64 {
 		return 0
 	}
 
-	return s.sum / float64(s.n)
+	maVal := s.sum / float64(s.n)
+
+	s.maVal.Append(maVal)
+
+	return maVal
 }
 
 func (s *Sma) InitPeriod() int64 {
@@ -45,6 +51,14 @@ func (s *Sma) InitPeriod() int64 {
 
 func (s *Sma) Valid() bool {
 	return s.sz > s.InitPeriod()
+}
+
+func (s *Sma) Size() int64 {
+	return s.maVal.Size()
+}
+
+func (s *Sma) NthNewest(n int64) float64 {
+	return s.maVal.NthNewest(n)
 }
 
 // A simple moving average is formed by computing the average price of a security
