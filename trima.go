@@ -15,6 +15,7 @@ type Trima struct {
 	leftSum   float64
 	rightSum  float64
 	sum       float64
+	maVal     *CBuf
 }
 
 func NewTrima(n int64) *Trima {
@@ -34,6 +35,7 @@ func NewTrima(n int64) *Trima {
 		leftSum:   0,
 		rightSum:  0,
 		sum:       0,
+		maVal:     NewCBuf(n),
 	}
 }
 
@@ -61,8 +63,11 @@ func (t *Trima) Update(v float64) float64 {
 			t.sum += -oldLeftSum + t.rightSum
 		}
 	}
+	maVal := t.sum * t.factor
 
-	return t.sum * t.factor
+	t.maVal.Append(maVal)
+
+	return maVal
 }
 
 func (t *Trima) InitPeriod() int64 {
@@ -71,6 +76,14 @@ func (t *Trima) InitPeriod() int64 {
 
 func (t *Trima) Valid() bool {
 	return t.hist.Size() > t.InitPeriod()
+}
+
+func (t *Trima) Size() int64 {
+	return t.maVal.Size()
+}
+
+func (t *Trima) NthNewest(n int64) float64 {
+	return t.maVal.NthNewest(n)
 }
 
 // The triangular moving average (TMA) is a technical indicator that is similar

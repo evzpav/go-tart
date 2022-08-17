@@ -57,6 +57,14 @@ func (m *Ma) Valid() bool {
 	return m.mu.Valid()
 }
 
+func (m *Ma) Size() int64 {
+	return m.mu.Size()
+}
+
+func (m *Ma) NthNewest(n int64) float64 {
+	return m.mu.NthNewest(n)
+}
+
 // Convenient wrapper for different moving average types
 func MaArr(t MaType, in []float64, n int64) []float64 {
 	out := make([]float64, len(in))
@@ -73,4 +81,5 @@ type maUpdater interface {
 	Update(v float64) float64
 	InitPeriod() int64
 	Valid() bool
+	Series
 }

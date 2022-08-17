@@ -13,20 +13,22 @@ package tart
 //  https://school.stockcharts.com/doku.php?id=technical_indicators:tema
 //  https://www.investopedia.com/terms/t/triple-exponential-moving-average.asp
 type Tema struct {
-	n    int64
-	sz   int64
-	ema1 *Ema
-	ema2 *Ema
-	ema3 *Ema
+	n     int64
+	sz    int64
+	ema1  *Ema
+	ema2  *Ema
+	ema3  *Ema
+	maVal *CBuf
 }
 
 func NewTema(n int64, k float64) *Tema {
 	return &Tema{
-		n:    n,
-		sz:   0,
-		ema1: NewEma(n, k),
-		ema2: NewEma(n, k),
-		ema3: NewEma(n, k),
+		n:     n,
+		sz:    0,
+		ema1:  NewEma(n, k),
+		ema2:  NewEma(n, k),
+		ema3:  NewEma(n, k),
+		maVal: NewCBuf(n),
 	}
 }
 
@@ -42,7 +44,11 @@ func (t *Tema) Update(v float64) float64 {
 			e3 := t.ema3.Update(e2)
 
 			if t.sz > t.n*3-3 {
-				return e3 + 3.0*(e1-e2)
+				maVal := e3 + 3.0*(e1-e2)
+
+				t.maVal.Append(maVal)
+
+				return maVal
 			}
 		}
 	}
@@ -58,6 +64,13 @@ func (t *Tema) Valid() bool {
 	return t.sz > t.InitPeriod()
 }
 
+func (t *Tema) Size() int64 {
+	return t.maVal.Size()
+}
+
+func (t *Tema) NthNewest(n int64) float64 {
+	return t.maVal.NthNewest(n)
+}
 // The Triple Exponential Moving Average (TEMA) reduces the lag of traditional
 // EMAs, making it more responsive and better-suited for short-term trading.
 // Shortly after developing the Double Exponential Moving Average (DEMA) in 1994,

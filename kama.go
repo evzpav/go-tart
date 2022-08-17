@@ -23,6 +23,7 @@ type Kama struct {
 	absChgHist []float64
 	sumAbsChg  float64
 	kama       float64
+	maVal      *CBuf
 }
 
 func NewKama(n int64) *Kama {
@@ -35,6 +36,7 @@ func NewKama(n int64) *Kama {
 		absChgHist: make([]float64, n),
 		sumAbsChg:  0,
 		kama:       0,
+		maVal:      NewCBuf(n),
 	}
 }
 
@@ -70,6 +72,9 @@ func (k *Kama) Update(v float64) float64 {
 	sc *= sc
 
 	k.kama = sc*v + (1-sc)*k.kama
+
+	k.maVal.Append(k.kama)
+
 	return k.kama
 }
 
@@ -79,6 +84,14 @@ func (k *Kama) InitPeriod() int64 {
 
 func (k *Kama) Valid() bool {
 	return k.sz > k.InitPeriod()
+}
+
+func (k *Kama) Size() int64 {
+	return k.maVal.Size()
+}
+
+func (k *Kama) NthNewest(n int64) float64 {
+	return k.maVal.NthNewest(n)
 }
 
 // Developed by Perry Kaufman, Kaufman's Adaptive Moving

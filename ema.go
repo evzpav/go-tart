@@ -10,20 +10,22 @@ package tart
 // days of data to calculate a reasonably accurate 10-day EMA.
 //  https://school.stockcharts.com/doku.php?id=technical_indicators:moving_averages
 type Ema struct {
-	n  int64
-	k1 float64
-	k2 float64
-	sz int64
-	ma float64
+	n     int64
+	k1    float64
+	k2    float64
+	sz    int64
+	ma    float64
+	maVal *CBuf
 }
 
 func NewEma(n int64, k float64) *Ema {
 	return &Ema{
-		n:  n,
-		k1: k,
-		k2: 1 - k,
-		sz: 0,
-		ma: 0,
+		n:     n,
+		k1:    k,
+		k2:    1 - k,
+		sz:    0,
+		ma:    0,
+		maVal: NewCBuf(n),
 	}
 }
 
@@ -39,7 +41,11 @@ func (e *Ema) Update(v float64) float64 {
 		e.ma = v*e.k1 + e.ma*e.k2
 	}
 
-	return e.ma
+	maVal := e.ma
+
+	e.maVal.Append(maVal)
+
+	return maVal
 }
 
 func (e *Ema) InitPeriod() int64 {
@@ -48,6 +54,14 @@ func (e *Ema) InitPeriod() int64 {
 
 func (e *Ema) Valid() bool {
 	return e.sz > e.InitPeriod()
+}
+
+func (e *Ema) Size() int64 {
+	return e.maVal.Size()
+}
+
+func (e *Ema) NthNewest(n int64) float64 {
+	return e.maVal.NthNewest(n)
 }
 
 // Exponential moving averages (EMAs) reduce the lag by

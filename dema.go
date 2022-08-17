@@ -17,6 +17,7 @@ type Dema struct {
 	ema1 *Ema
 	ema2 *Ema
 	sz   int64
+	maVal *CBuf
 }
 
 func NewDema(n int64, k float64) *Dema {
@@ -25,6 +26,7 @@ func NewDema(n int64, k float64) *Dema {
 		ema1: NewEma(n, k),
 		ema2: NewEma(n, k),
 		sz:   0,
+		maVal: NewCBuf(n),
 	}
 }
 
@@ -36,7 +38,9 @@ func (d *Dema) Update(v float64) float64 {
 	if d.sz > d.n-1 {
 		e2 := d.ema2.Update(e1)
 		if d.sz > d.n*2-2 {
-			return 2.0*e1 - e2
+			maVal := 2.0*e1 - e2
+			d.maVal.Append(maVal)
+			return maVal
 		}
 	}
 
@@ -50,6 +54,15 @@ func (d *Dema) InitPeriod() int64 {
 func (d *Dema) Valid() bool {
 	return d.sz > d.InitPeriod()
 }
+
+func (d *Dema) Size() int64 {
+	return d.maVal.Size()
+}
+
+func (d *Dema) NthNewest(n int64) float64 {
+	return d.maVal.NthNewest(n)
+}
+
 
 // The Double Exponential Moving Average (DEMA) reduces the lag
 // of traditional EMAs, making it more responsive and better-suited

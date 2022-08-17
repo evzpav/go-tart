@@ -19,18 +19,33 @@ func min(a, b float64) float64 {
 	return b
 }
 
-func Crossover(series1, series2 *CBuf) bool {
-	if series1.Size() < 3 || series2.Size() < 3 {
-		return false
-	}
-
-	return series1.NthOldest(2) <= series2.NthOldest(2) && series1.NthOldest(1) > series2.NthOldest(1)
+type Series interface {
+	Size() int64
+	NthNewest(int64) float64
 }
 
-func Crossunder(series1, series2 *CBuf) bool {
-	if series1.Size() < 3 || series2.Size() < 3 {
+func Crossover(series1, series2 Series) bool {
+	if series1.Size() < 2 || series2.Size() < 2 {
 		return false
 	}
 
-	return series1.NthOldest(2) > series2.NthOldest(2) && series1.NthOldest(1) <= series2.NthOldest(1)
+	s1_2 := series1.NthNewest(1)
+	s2_2 := series2.NthNewest(1)
+	s1_1 := series1.NthNewest(0)
+	s2_1 := series2.NthNewest(0)
+
+	return s1_2 <= s2_2 && s1_1 > s2_1
+}
+
+func Crossunder(series1, series2 Series) bool {
+	if series1.Size() < 2 || series2.Size() < 2 {
+		return false
+	}
+
+	s1_2 := series1.NthNewest(1)
+	s2_2 := series2.NthNewest(1)
+	s1_1 := series1.NthNewest(0)
+	s2_1 := series2.NthNewest(0)
+
+	return s1_2 > s2_2 && s1_1 <= s2_1
 }
