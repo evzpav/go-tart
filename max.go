@@ -43,6 +43,14 @@ func (m *Max) Valid() bool {
 	return m.hist.Size() > m.InitPeriod()
 }
 
+func (m *Max) Size() int64 {
+	return m.hist.Size()
+}
+
+func (m *Max) NthNewest(n int64) float64 {
+	return m.hist.NthNewest(n)
+}
+
 // Max value of the selected period.
 func MaxArr(in []float64, n int64) ([]int64, []float64) {
 	outIdx := make([]int64, len(in))

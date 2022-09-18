@@ -43,6 +43,14 @@ func (m *Min) Valid() bool {
 	return m.hist.Size() > m.InitPeriod()
 }
 
+func (m *Min) Size() int64 {
+	return m.hist.Size()
+}
+
+func (m *Min) NthNewest(n int64) float64 {
+	return m.hist.NthNewest(n)
+}
+
 // Min value of the selected period.
 func MinArr(in []float64, n int64) ([]int64, []float64) {
 	outIdx := make([]int64, len(in))
